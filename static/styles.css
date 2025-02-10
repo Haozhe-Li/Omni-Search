@@ -1,0 +1,277 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fcfcf9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.search-container {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 3rem 0 1rem;
+  font-size: 1.125rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #51959e;
+}
+
+.search-icons {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: #64748b;
+}
+
+.icon-small {
+  width: 20px;
+  height: 20px;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.suggestion-chip {
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestion-chip:hover {
+  background: #e2e8f0;
+}
+
+.loading-container {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #1f818e;
+  transition: width 0.2s;
+}
+
+.loading-text {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.result-container {
+  width: 100%;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+}
+
+/* Markdown Styles */
+.result-container h1 {
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.result-container h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1.5rem 0 1rem;
+}
+
+.result-container h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.result-container p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.result-container ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.result-container a {
+  color: #51959e;
+  text-decoration: none;
+}
+
+.result-container a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .search-container {
+    flex-direction: column;
+  }
+
+  .mode-selector,
+  .search-button {
+    width: 100%;
+  }
+
+  .dropdown-menu {
+    width: 100%;
+  }
+}
+
+/* ...existing code... */
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slide {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Global Animated Class */
+.animated {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Apply fadeIn to major sections */
+.container,
+.search-container,
+.result-container,
+.suggestions,
+.loading-container {
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards;
+  animation-delay: 0.2s;
+}
+
+/* Enhance search-button with gradient and heavier text */
+.search-button {
+  height: 48px;
+  padding: 0 1.5rem;
+  background: linear-gradient(90deg, #de7ffe, #51959e);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.search-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #b95ed7, #1f818e);
+}
+
+/* Animate suggestion chips on hover */
+.suggestion-chip {
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.suggestion-chip:hover {
+  transform: scale(1.05);
+  background: #e2e8f0;
+}
+
+/* Animated progress fill bar */
+.progress-fill {
+  animation: slide 2s linear infinite;
+}
+
+/* Smooth transitions for input focus */
+.search-input {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 8px #51959e;
+}
