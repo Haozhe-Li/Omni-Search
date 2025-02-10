@@ -275,3 +275,24 @@ body {
 .search-input:focus {
   box-shadow: 0 0 8px #51959e;
 }
+
+/* footer */
+.footer {
+  margin-top: auto;
+  padding: 2rem 0;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.footer a {
+  color: #51959e;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  color: #1f818e;
+  text-decoration: underline;
+}
