@@ -167,7 +167,7 @@ class AISearch:
     async def search(self, query):
         initial_ans = await self._generate_initial_answer(query)
         breakdown = await self._breakdown_question(query)
-        print(f"Question Breakdown: {json.dumps(breakdown, indent=2)}")
+        # print(f"Question Breakdown: {json.dumps(breakdown, indent=2)}")
 
         best = None
         attempts = 0
@@ -184,9 +184,9 @@ class AISearch:
             )
 
             evaluation = await self._evaluate_answer(query, answer)
-            print(
-                f"Attempt {attempts+1} Evaluation: {json.dumps(evaluation, indent=2)}"
-            )
+            # print(
+            #     f"Attempt {attempts+1} Evaluation: {json.dumps(evaluation, indent=2)}"
+            # )
 
             if not best or evaluation["score"] > best["score"]:
                 sources = list(
@@ -215,7 +215,7 @@ class AISearch:
             "sources": best["sources"],
             "evaluation": best["feedback"],
         }
-    
+
     async def quick_search(self, query):
         # use openai to quickly generate a response based on websearch
         websearch = await self._web_search(query)
