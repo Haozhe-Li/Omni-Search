@@ -8,17 +8,30 @@ from openai import AsyncOpenAI
 
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 class AISearch:
     def __init__(self):
         self.tavily = TavilyClient(api_key=TAVILY_API_KEY)
         self.oai = AsyncOpenAI(api_key=OPENAI_API_KEY)
+        self.gai = AsyncOpenAI(base_url="https://api.groq.com/openai/v1", api_key=GROQ_API_KEY)
         self.cache = {}
         self.max_retries = 2
         self.current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    async def _call_gpt(self, prompt, json_format=False):
+    async def _call_gpt(self, prompt, json_format=False, quick=False):
+        if quick:
+            response = await self.gai.chat.completions.create(
+                model="qwen-2.5-32b",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.2,
+                response_format=(
+                    {"type": "json_object"} if json_format else {"type": "text"}
+                ),
+            )
+            return response.choices[0].message.content.strip()
+
+
         response = await self.oai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
@@ -45,7 +58,7 @@ class AISearch:
         self.cache[query] = "\n\n".join(formatted)
         return self.cache[query]
 
-    async def _generate_initial_answer(self, query, skip = False):
+    async def _generate_initial_answer(self, query, skip = False, quick = False):
         if skip:
             return f""
         prompt = f"""Today is {self.current_date}. Generate a preliminary answer to this question:
@@ -61,9 +74,9 @@ class AISearch:
         - Needed: Q4 revenue growth rate, net profit margin
         - Structure: Market context -> Financial numbers -> Analyst opinions"""
 
-        return await self._call_gpt(prompt)
+        return await self._call_gpt(prompt, quick=quick)
 
-    async def _breakdown_question(self, query):
+    async def _breakdown_question(self, query, quick=False):
         prompt = f"""Today is {self.current_date}. Break down this complex question into 2-4 sub-questions. 
         When breaking down the questions, consider the different aspects that need to be covered to provide a comprehensive answer.
 
@@ -112,10 +125,10 @@ class AISearch:
         
         Current Question: {query}"""
 
-        response = await self._call_gpt(prompt, json_format=True)
+        response = await self._call_gpt(prompt, json_format=True, quick=quick)
         return json.loads(response)
 
-    async def _evaluate_answer(self, query, answer, skip=False):
+    async def _evaluate_answer(self, query, answer, skip=False, quick=False):
         if skip:
             return {
             "score": 10,
@@ -155,9 +168,9 @@ class AISearch:
         Question: {query}
         Answer: {answer}"""
 
-        return json.loads(await self._call_gpt(prompt, json_format=True))
+        return json.loads(await self._call_gpt(prompt, json_format=True, quick=quick))
 
-    async def _synthesize_answer(self, query, contexts, initial_ans, feedback=None):
+    async def _synthesize_answer(self, query, contexts, initial_ans, feedback=None, quick=False):
         prompt = f"""Today is {self.current_date}. Combine these elements into a final answer:
         
         [Question]
@@ -196,9 +209,9 @@ class AISearch:
         3. [Financial Times](https://...)
         """
 
-        return await self._call_gpt(prompt)
+        return await self._call_gpt(prompt, quick=quick)
     
-    async def _validate_answer(self, query, answer):
+    async def _validate_answer(self, query, answer, quick=False):
         prompt = f"""Today is {self.current_date}. Validate this answer based on the following criteria:
         
         Requirements:
@@ -218,19 +231,19 @@ class AISearch:
 
         3. Ensure that the answer is relevant to the question.
         4. Ensure that the answer follows the language that the question was asked in. If wrong language is used, correct it.
-        
-        You should give back the answer that you validated and polished. 
 
         Question: {query}
-        Answer: {answer}"""
+        Answer: {answer}
 
-        return await self._call_gpt(prompt)
+        Now, please give back the answer that you validated and polished only, without the validation instructions or feedback."""
+
+        return await self._call_gpt(prompt, quick=quick)
 
     async def search(self, query):
         timer = time.time()
         initial_ans, breakdown = await asyncio.gather(
             self._generate_initial_answer(query, skip=True),
-            self._breakdown_question(query)
+            self._breakdown_question(query, quick=False),
         )
         print(f"Time taken for init answer and breakdown: {time.time() - timer}")
         # print(f"Question Breakdown: {json.dumps(breakdown, indent=2)}")
@@ -247,12 +260,12 @@ class AISearch:
                 print(f"Time taken for searching: {time.time() - timer}")
 
             answer = await self._synthesize_answer(
-                query, context, initial_ans, feedback=best["feedback"] if best else None
+                query, context, initial_ans, feedback=best["feedback"] if best else None, quick=True
             )
 
             print(f"Time taken for synth: {time.time() - timer}")
 
-            answer = await self._validate_answer(query, answer)
+            answer = await self._validate_answer(query, answer, quick=True)
 
             print(f"Time taken for validate: {time.time() - timer}")
 
