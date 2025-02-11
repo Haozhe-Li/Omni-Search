@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from core import AISearch
 
+sample_response = {
+    "result": """## Hello \n Codeblock: \n ```python \n print('Hello') \n ``` \n""",
+}
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -10,6 +14,8 @@ async def index():
 @app.route('/search', methods=['POST'])
 async def search():
     query = request.json['query']
+    if query == "test":
+        return jsonify(sample_response)
     search = AISearch()
     result = await search.search(query)
     result = result['answer']

@@ -49,6 +49,5 @@ function switchLanguage(lang) {
         const userLang = navigator.language || navigator.userLanguage;
         lang = userLang.includes('zh') ? 'zh' : 'en';
     }
-
     switchLanguage(lang);
 })();

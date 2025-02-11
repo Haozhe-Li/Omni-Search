@@ -190,18 +190,37 @@ body {
 
 .result-container code {
   padding: 0.25rem 0.5rem;
-  background: #f1f5f9;
+  background: #eaf4fe;
   border-radius: 0.25rem;
   line-height: 1.6;
 }
 
-.result-container pre {
+.result-container pre code {
   margin: 1rem 0;
   padding: 1rem;
-  background: #f1f5f9;
+  background: #2f353b;
   border-radius: 0.5rem;
   overflow-x: auto;
   line-height: 1.6;
+}
+
+/* LaTeX Equation Styling */
+.equation {
+  display: block;
+  text-align: center;
+  font-style: italic;
+  margin: 2rem auto;
+  padding: 0.5rem 1rem;
+  background-color: #f9f9f9;
+  border-left: 4px solid #de7ffe;
+  overflow-x: auto;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.equation.inline {
+  display: inline;
+  margin: 0 0.25rem;
 }
 
 
