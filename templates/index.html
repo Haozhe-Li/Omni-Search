@@ -60,6 +60,12 @@
             <!-- Search results will be dynamically inserted here -->
         </div>
         <footer class="footer">
+            <div class="language-switch">
+                <select id="language-select" onchange="switchLanguage(this.value)">
+                    <option value="en" selected>English</option>
+                    <option value="zh">中文</option>
+                </select>
+            </div>
             <p>Copyright <a href="https://haozhe.li">Haozhe Li</a> 2025 at <a href="/">Omni Search</a></p>
         </footer>
     </div>
@@ -68,6 +74,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='language.js') }}"></script>
 </body>
 
 </html>
