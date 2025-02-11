@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from core import AISearch
 
 sample_response = {
-    "result": """## Hello \n Codeblock: \n ```python \n print('Hello') \n ``` \n""",
+    "result": """""",
 }
 
 app = Flask(__name__)

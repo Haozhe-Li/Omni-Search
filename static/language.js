@@ -1,14 +1,14 @@
 function switchLanguage(lang) {
     const translations = {
         en: {
-            title: "Omni Knows Everything",
+            title: "Omni Knows X.Y.Z.",
             footer: "Omni Search",
             searchButton: "Search",
             searchPlaceholder: "Got any questions?"
         },
         zh: {
-            title: "全知全能",
-            footer: "全知搜索",
+            title: "奥秘尽知",
+            footer: "奥秘搜索",
             searchButton: "搜索",
             searchPlaceholder: "想问些什么？"
         }
