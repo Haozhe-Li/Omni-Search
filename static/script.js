@@ -12,10 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // let searchMode = "quick"
   const suggestedQueries = [
-    "Best TV shows 2025?",
+    "Best TV shows for this year?",
     "Healthiest cooking oils?",
     "Latest AI developments",
     "Climate change solutions",
+    "谁是姆巴佩？",
+    "How to make a cake?",
+    "What day is today?",
+    "本の書き方は？",
   ]
 
   // Populate suggested queries
