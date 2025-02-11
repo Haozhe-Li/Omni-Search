@@ -157,6 +157,7 @@ body {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
 
 .result-container a {
@@ -168,17 +169,45 @@ body {
   text-decoration: underline;
 }
 
+.result-container img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* other that might occur in a markdown */
+.result-container ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.result-container blockquote {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  border-left: 4px solid #de7ffe;
+}
+
+.result-container code {
+  padding: 0.25rem 0.5rem;
+  background: #f1f5f9;
+  border-radius: 0.25rem;
+}
+
+.result-container pre {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f1f5f9;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+
 @media (max-width: 640px) {
   .search-container {
     flex-direction: column;
   }
-
-  .mode-selector,
   .search-button {
-    width: 100%;
-  }
-
-  .dropdown-menu {
     width: 100%;
   }
 }
@@ -250,6 +279,15 @@ body {
 .search-button:hover {
   transform: scale(1.05);
   background: linear-gradient(90deg, #b95ed7, #1f818e);
+}
+
+@media (max-width: 640px) {
+  .search-button:hover {
+    transform: none;
+  }
+  .suggestion-chip:hover {
+    transform: none;
+  }
 }
 
 /* Animate suggestion chips on hover */

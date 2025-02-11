@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(interval)
         loadingText.textContent = "Performing final checks..."
       }
-    }, 2000)
+    }, 2500)
   
     // Updated API call to /search using POST and JSON body
     fetch(`/search`, {

@@ -10,7 +10,6 @@ async def index():
 @app.route('/search', methods=['POST'])
 async def search():
     query = request.json['query']
-    # mode = request.json['mode']
     search = AISearch()
     result = await search.search(query)
     result = result['answer']

@@ -1,6 +1,7 @@
 import os
 import asyncio
 import json
+import time
 from datetime import datetime
 from tavily import TavilyClient
 from openai import AsyncOpenAI
@@ -44,7 +45,9 @@ class AISearch:
         self.cache[query] = "\n\n".join(formatted)
         return self.cache[query]
 
-    async def _generate_initial_answer(self, query):
+    async def _generate_initial_answer(self, query, skip = False):
+        if skip:
+            return f""
         prompt = f"""Today is {self.current_date}. Generate a preliminary answer to this question:
         {query}
         
@@ -61,7 +64,7 @@ class AISearch:
         return await self._call_gpt(prompt)
 
     async def _breakdown_question(self, query):
-        prompt = f"""Today is {self.current_date}. Break down this complex question into 3-5 sub-questions. 
+        prompt = f"""Today is {self.current_date}. Break down this complex question into 2-4 sub-questions. 
         When breaking down the questions, consider the different aspects that need to be covered to provide a comprehensive answer.
 
         You are encouraged to generate sub-questions with different language as the original question, if you think it will help to get a better answer.
@@ -89,7 +92,6 @@ class AISearch:
         Example Output: {{
             "sub_questions": [
                 "Who is Cristiano Ronaldo?",
-                "What is Cristiano Ronaldo known for?",
                 "What are Cristiano Ronaldo's achievements?"
                 "C罗是否访问过中国？"
             ],
@@ -117,12 +119,7 @@ class AISearch:
         if skip:
             return {
             "score": 10,
-            "feedback": "Accurate data but needs better source organization",
-            "detailed": {{
-                "strengths": ["Correct revenue figures", "Good market context"],
-                "weaknesses": ["Missing Q4 comparisons", "Uncited market share data"],
-                "improvements": ["Add 2023 vs 2024 growth rates", "Link to official financial reports"]
-            }}
+            "feedback": "Skipped evaluation",
         }
 
         prompt = f"""Today is {self.current_date}. Evaluate this answer using these criteria:
@@ -184,26 +181,58 @@ class AISearch:
         
         Example Structure:
         ## Overview
-        Market context... [Reuters](https://...)
+        Market context... [1](https://...) --> in text citation, 1 is the reference number to [NVIDIA Newsroom](https://...) in reference list
         
         ## Financial Performance
-        - Q4 Revenue: $22.1B [NVIDIA Newsroom](https://...)
-        - Net Margin: 56% [Bloomberg](https://...)
+        - Q4 Revenue: $22.1B [1](https://...)
+        - Net Margin: 56% [2](https://...)
         
         ## Analysis
-        "The growth reflects..." [Financial Times](https://...)
+        "The growth reflects..." [3](https://...)
 
         ## References
-        - [NVIDIA Newsroom](https://...)
-        - [Bloomberg](https://...)
-        - [Financial Times](https://...)
+        1. [NVIDIA Newsroom](https://...)
+        2. [Bloomberg](https://...)
+        3. [Financial Times](https://...)
         """
+
+        return await self._call_gpt(prompt)
+    
+    async def _validate_answer(self, query, answer):
+        prompt = f"""Today is {self.current_date}. Validate this answer based on the following criteria:
+        
+        Requirements:
+        1. Ensure that the answer strictly follow the markdown format.
+        2. Ensure that the citation format follows below:
+        Example:
+        This is a sentence. [1](https://...) --> in text citation, 1 is the reference number to [Title 1](https://...) in reference list
+
+        At the end of the answer, there should be a reference list with the following format:
+        ## References
+        1. [Title 1](url)
+        2. [Title 2](url)
+
+        The reference list should be in the same order as the in-text citations.
+
+        If incorrect [] and () are used, e.g. 【】 and （）, correct them.
+
+        3. Ensure that the answer is relevant to the question.
+        4. Ensure that the answer follows the language that the question was asked in. If wrong language is used, correct it.
+        
+        You should give back the answer that you validated and polished. 
+
+        Question: {query}
+        Answer: {answer}"""
 
         return await self._call_gpt(prompt)
 
     async def search(self, query):
-        initial_ans = await self._generate_initial_answer(query)
-        breakdown = await self._breakdown_question(query)
+        timer = time.time()
+        initial_ans, breakdown = await asyncio.gather(
+            self._generate_initial_answer(query, skip=True),
+            self._breakdown_question(query)
+        )
+        print(f"Time taken for init answer and breakdown: {time.time() - timer}")
         # print(f"Question Breakdown: {json.dumps(breakdown, indent=2)}")
 
         best = None
@@ -215,12 +244,21 @@ class AISearch:
                     *[self._web_search(q) for q in breakdown["sub_questions"]]
                 )
                 context = "\n\n".join(search_results)
+                print(f"Time taken for searching: {time.time() - timer}")
 
             answer = await self._synthesize_answer(
                 query, context, initial_ans, feedback=best["feedback"] if best else None
             )
 
-            evaluation = await self._evaluate_answer(query, answer)
+            print(f"Time taken for synth: {time.time() - timer}")
+
+            answer = await self._validate_answer(query, answer)
+
+            print(f"Time taken for validate: {time.time() - timer}")
+
+            evaluation = await self._evaluate_answer(query, answer, skip=True)
+
+            print(f"Time taken for eval: {time.time() - timer}")
             # print(
             #     f"Attempt {attempts+1} Evaluation: {json.dumps(evaluation, indent=2)}"
             # )
@@ -247,6 +285,7 @@ class AISearch:
 
             attempts += 1
 
+        print(f"Total time taken: {time.time() - timer}")
         return {
             "answer": best["answer"],
             "sources": best["sources"],
