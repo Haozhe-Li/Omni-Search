@@ -5,13 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMNI Search</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='img/site.webmanifest') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="gradient-title"><a href="/">Search with OMNI</a></h1>
+            <div style="text-align: center;">
+                <a href="/"><img src="{{ url_for('static', filename='img/android-chrome-512x512.png') }}" alt="OMNI Search" class="logo" style="width: 100px; height: 100px;"></a>
+                <h1 class="gradient-title"><a href="/">Search with OMNI</a></h1>
+            </div>
         </header>
 
         <div class="search-container">
