@@ -192,6 +192,7 @@ body {
   padding: 0.25rem 0.5rem;
   background: #f1f5f9;
   border-radius: 0.25rem;
+  line-height: 1.6;
 }
 
 .result-container pre {
@@ -200,6 +201,7 @@ body {
   background: #f1f5f9;
   border-radius: 0.5rem;
   overflow-x: auto;
+  line-height: 1.6;
 }
 
 

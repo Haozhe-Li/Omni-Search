@@ -10,11 +10,14 @@ TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
+
 class AISearch:
     def __init__(self):
         self.tavily = TavilyClient(api_key=TAVILY_API_KEY)
         self.oai = AsyncOpenAI(api_key=OPENAI_API_KEY)
-        self.gai = AsyncOpenAI(base_url="https://api.groq.com/openai/v1", api_key=GROQ_API_KEY)
+        self.gai = AsyncOpenAI(
+            base_url="https://api.groq.com/openai/v1", api_key=GROQ_API_KEY
+        )
         self.cache = {}
         self.max_retries = 2
         self.current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -30,7 +33,6 @@ class AISearch:
                 ),
             )
             return response.choices[0].message.content.strip()
-
 
         response = await self.oai.chat.completions.create(
             model="gpt-4o-mini",
@@ -58,7 +60,7 @@ class AISearch:
         self.cache[query] = "\n\n".join(formatted)
         return self.cache[query]
 
-    async def _generate_initial_answer(self, query, skip = False, quick = False):
+    async def _generate_initial_answer(self, query, skip=False, quick=False):
         if skip:
             return f""
         prompt = f"""Today is {self.current_date}. Generate a preliminary answer to this question:
@@ -75,6 +77,21 @@ class AISearch:
         - Structure: Market context -> Financial numbers -> Analyst opinions"""
 
         return await self._call_gpt(prompt, quick=quick)
+
+    async def _get_language(self, query):
+        prompt = f"""
+            Your task is to identfiy the language of a question, and return the languge in native language name.
+
+            Example: "What is the capital of France?"
+            Output: "English"
+
+            Example:"法国的首都是什么？"
+            Output: "简体中文"
+
+            Your question is:
+                    {query}
+        """
+        return await self._call_gpt(prompt=prompt, quick=True)
 
     async def _breakdown_question(self, query, quick=False):
         prompt = f"""Today is {self.current_date}. Break down this complex question into 2-4 sub-questions. 
@@ -131,9 +148,9 @@ class AISearch:
     async def _evaluate_answer(self, query, answer, skip=False, quick=False):
         if skip:
             return {
-            "score": 10,
-            "feedback": "Skipped evaluation",
-        }
+                "score": 10,
+                "feedback": "Skipped evaluation",
+            }
 
         prompt = f"""Today is {self.current_date}. Evaluate this answer using these criteria:
         1. Factual accuracy (verify against known facts)
@@ -170,26 +187,28 @@ class AISearch:
 
         return json.loads(await self._call_gpt(prompt, json_format=True, quick=quick))
 
-    async def _synthesize_answer(self, query, contexts, initial_ans, feedback=None, quick=False):
+    async def _synthesize_answer(
+        self,
+        query,
+        contexts,
+        language,
+        feedback=None,
+        quick=False,
+    ):
         prompt = f"""Today is {self.current_date}. Combine these elements into a final answer:
         
         [Question]
         {query}
         
-        [Initial Analysis by LLM (could not be accurate)]
-        {initial_ans}
-        
         [Research Context]
         {contexts}
-        
-        {f"[Previous Feedback] {feedback}" if feedback else ""}
         
         Requirements:
         1. Use markdown formatting
         2. Cite sources as [Title](url)
         3. Include data points from research
         4. Current date: {self.current_date}
-        5. use same language as the original question
+        5. use {language} language for the answer
         6. You have to create a reference list at the end, see the example.
         
         Example Structure:
@@ -209,9 +228,11 @@ class AISearch:
         3. [Financial Times](https://...)
         """
 
+        print(f"Synth prompt: {prompt}")
+
         return await self._call_gpt(prompt, quick=quick)
-    
-    async def _validate_answer(self, query, answer, quick=False):
+
+    async def _validate_answer(self, query, answer, language, quick=False):
         prompt = f"""Today is {self.current_date}. Validate this answer based on the following criteria:
         
         Requirements:
@@ -230,7 +251,7 @@ class AISearch:
         If incorrect [] and () are used, e.g. 【】 and （）, correct them.
 
         3. Ensure that the answer is relevant to the question.
-        4. Ensure that the answer follows the language that the question was asked in. If wrong language is used, correct it.
+        4. Ensure that the answer is in {language}. If wrong language is used, correct and translate it.
 
         Question: {query}
         Answer: {answer}
@@ -241,12 +262,13 @@ class AISearch:
 
     async def search(self, query):
         timer = time.time()
-        initial_ans, breakdown = await asyncio.gather(
-            self._generate_initial_answer(query, skip=True),
+        language, breakdown = await asyncio.gather(
+            self._get_language(query),
             self._breakdown_question(query, quick=False),
         )
         print(f"Time taken for init answer and breakdown: {time.time() - timer}")
         # print(f"Question Breakdown: {json.dumps(breakdown, indent=2)}")
+        print(language)
 
         best = None
         attempts = 0
@@ -260,12 +282,16 @@ class AISearch:
                 print(f"Time taken for searching: {time.time() - timer}")
 
             answer = await self._synthesize_answer(
-                query, context, initial_ans, feedback=best["feedback"] if best else None, quick=True
+                query,
+                context,
+                language=language,
+                feedback="",
+                quick=True,
             )
 
             print(f"Time taken for synth: {time.time() - timer}")
 
-            answer = await self._validate_answer(query, answer, quick=True)
+            answer = await self._validate_answer(query, answer, language, quick=True)
 
             print(f"Time taken for validate: {time.time() - timer}")
 
