@@ -4,17 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Search Engine</title>
+    <title>OMNI Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
     <div class="container">
-        <h1 class="title">Search with OMNI</h1>
+        <header class="header">
+            <h1 class="gradient-title"><a href="/">Search with OMNI</a></h1>
+        </header>
 
         <div class="search-container">
             <div class="search-wrapper">
-                <input id="search-input" type="text" placeholder="Got any questions?" class="search-input">
+                <input id="search-input" type="text" placeholder="Got any questions?" class="search-input" required>
                 <!-- <div class="search-icons">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -84,7 +86,7 @@
         </div>
         <!-- footer -->
     <footer class="footer">
-        <p>Copyright <a href="https://haozhe.li">Haozhe Li</a> 2025 at <a href="https://omni.haozheli.com">Omni Search</a></p>
+        <p>Copyright <a href="https://haozhe.li">Haozhe Li</a> 2025 at <a href="/">Omni Search</a></p>
     </footer>
     </div>
 

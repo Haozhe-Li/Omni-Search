@@ -62,7 +62,9 @@ class AISearch:
 
     async def _breakdown_question(self, query):
         prompt = f"""Today is {self.current_date}. Break down this complex question into 3-5 sub-questions. 
-        When breaking down the questions, please make sure you follow the same language as the original question.
+        When breaking down the questions, consider the different aspects that need to be covered to provide a comprehensive answer.
+
+        You are encouraged to generate sub-questions with different language as the original question, if you think it will help to get a better answer.
         Follow this template as json format:
         {{
             "sub_questions": [
@@ -81,13 +83,48 @@ class AISearch:
             ],
             "reasoning": "Breakdown focuses on financial metrics, market share, and expert analysis for accurate comparison"
         }}
+
+        Example Input: "谁是C罗？"
+        # Chinese question, but the sub-questions can be in English (but not all the time)
+        Example Output: {{
+            "sub_questions": [
+                "Who is Cristiano Ronaldo?",
+                "What is Cristiano Ronaldo known for?",
+                "What are Cristiano Ronaldo's achievements?"
+                "C罗是否访问过中国？"
+            ],
+            "reasoning": "Breakdown focuses on financial metrics, market share, and expert analysis for accurate comparison"
+        }}
+
+        Example Input: "What is the capital of China?"
+        # English question, but the sub-questions can be in Chinese (but not all the time)
+        Example Output: {{
+            "sub_questions": [
+                "中国的首都是什么？",
+                "北京有什么名胜古迹？",
+                "北京的气候如何？"
+            ],
+            "reasoning": "Breakdown focuses on financial metrics, market share, and expert analysis for accurate comparison"
+        }}
+
         
         Current Question: {query}"""
 
         response = await self._call_gpt(prompt, json_format=True)
         return json.loads(response)
 
-    async def _evaluate_answer(self, query, answer):
+    async def _evaluate_answer(self, query, answer, skip=False):
+        if skip:
+            return {
+            "score": 10,
+            "feedback": "Accurate data but needs better source organization",
+            "detailed": {{
+                "strengths": ["Correct revenue figures", "Good market context"],
+                "weaknesses": ["Missing Q4 comparisons", "Uncited market share data"],
+                "improvements": ["Add 2023 vs 2024 growth rates", "Link to official financial reports"]
+            }}
+        }
+
         prompt = f"""Today is {self.current_date}. Evaluate this answer using these criteria:
         1. Factual accuracy (verify against known facts)
         2. Source citation quality (markdown links [title](url))
@@ -129,7 +166,7 @@ class AISearch:
         [Question]
         {query}
         
-        [Initial Analysis]
+        [Initial Analysis by LLM (could not be accurate)]
         {initial_ans}
         
         [Research Context]

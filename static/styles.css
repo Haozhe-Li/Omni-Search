@@ -111,7 +111,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: #1f818e;
+  background: linear-gradient(90deg, #de7ffe, #51959e);
   transition: width 0.2s;
 }
 
@@ -296,3 +296,25 @@ body {
   color: #1f818e;
   text-decoration: underline;
 }
+
+.header {
+  position: relative;
+  padding: 1rem;
+}
+.gradient-title {
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #cc71e7, #388994);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-title a {
+  text-decoration: none;
+}
+.icon-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
