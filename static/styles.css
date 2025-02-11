@@ -357,3 +357,17 @@ body {
   right: 10px;
 }
 
+.placeholder-text {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.overlay-progress {
+  z-index: 10;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s;
+}

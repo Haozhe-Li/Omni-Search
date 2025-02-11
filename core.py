@@ -22,7 +22,7 @@ class AISearch:
     async def _call_gpt(self, prompt, json_format=False, quick=False):
         if quick:
             response = await self.gai.chat.completions.create(
-                model="qwen-2.5-32b",
+                model="llama-3.1-8b-instant",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2,
                 response_format=(
