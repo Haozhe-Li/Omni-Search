@@ -10,7 +10,7 @@ function switchLanguage(lang, triggerRefresh = false) {
         },
         zh: {
             title: "奥秘尽知",
-            footer: "奥秘搜索",
+            footer: "奥秘全索",
             searchButton: "搜索",
             searchPlaceholder: "想问些什么？",
             modeFast: "预览",

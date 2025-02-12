@@ -356,6 +356,13 @@ body {
   text-decoration: underline;
 }
 
+.language-switch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
 .header {
   position: relative;
   padding: 1rem;
@@ -476,3 +483,4 @@ body {
 .description-mode.update {
     animation: descriptionUpdate 0.3s ease-out;
 }
+

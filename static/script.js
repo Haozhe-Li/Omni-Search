@@ -118,23 +118,12 @@ While you see this placeholder text, we are effectively “reasoning” with our
         loadingContainer.style.display = "block"
         progressFill.style.width = "0%"
 
-        let progress = 0
-        const progressInterval = setInterval(() => {
-            progress += 10
-            progressFill.style.width = `${progress}%`
-            if (progress < 20) {
-                loadingText.textContent = "Understanding your query..."
-            } else if (progress < 50) {
-                loadingText.textContent = "Searching the web..."
-            } else if (progress < 70) {
-                loadingText.textContent = "Reasoning with AI..."
-            } else if (progress < 90) {
-                loadingText.textContent = "Pulling things together..."
-            } else {
-                clearInterval(progressInterval)
-                loadingText.textContent = "Performing final checks..."
-            }
-        }, 2500)
+        if (mode == "universal") {
+            loadingText.textContent = language === 'zh' ? "正在全面搜索结果中，请稍等，预计需要 10-15 秒..." : "Performing a comprehensive search, please wait, it may take 10-15 seconds..."
+        } else {
+            loadingText.textContent = language === 'zh' ? "正在极速查询" : "Performing a lightning-fast search"
+        }
+
 
         fetch(`/search`, {
             method: "POST",
