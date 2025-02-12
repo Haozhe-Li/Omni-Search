@@ -94,17 +94,19 @@ class AISearch:
     async def _get_language(self, query):
         prompt = f"""
             Your task is to identfiy the language of a question, and return the languge in native language name.
+            When returning the language, use JSON format, and put it under "language" key.
 
             Example: "What is the capital of France?"
-            Output: "English"
+            Output: "language": "English"
 
             Example:"法国的首都是什么？"
-            Output: "简体中文"
+            Output: "language": "简体中文"
 
             Your question is:
-                    {query}
+            {query}
         """
-        return await self._call_gpt(prompt=prompt, quick=True)
+        response =  await self._call_gpt(prompt=prompt, quick=True, json_format=True)
+        return json.loads(response)["language"]
 
     async def _breakdown_question(self, query, quick=False):
         prompt = f"""Today is {self.current_date}. Break down this complex question into 2-4 sub-questions. 
