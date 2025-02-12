@@ -362,12 +362,14 @@ body {
 }
 
 .gradient-title {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
   background: linear-gradient(90deg, #cc71e7, #388994);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+
 
 .gradient-title a {
   text-decoration: none;
