@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omni Knows Everything</title>
+    <title>Omni Knows X.Y.Z.</title>
     <meta name="description" content="An AI search engine that understands your questions.">
     <meta name="keywords" content="AI, search, engine, omni, understand, questions">
     <meta name="author" content="Haozhe Li">
@@ -22,6 +22,16 @@
                 <a href="/"><img src="{{ url_for('static', filename='img/android-chrome-512x512.webp') }}"
                         alt="OMNI Search" class="logo" style="width: 70px; height: 70px;"></a>
                 <h1 class="gradient-title"><a href="/">Omni Knows X.Y.Z.</a></h1>
+
+                <!-- 新增模式切换滑块，放置于标题正下方 -->
+                <div class="mode-switch">
+                    <input type="checkbox" id="mode-toggle" class="mode-toggle">
+                    <label for="mode-toggle" class="mode-toggle-label">
+                        <span class="mode-label mode-fast">Light</span>
+                        <span class="mode-label mode-universal">Omni</span>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
         </header>
 
@@ -53,7 +63,7 @@
             <div class="progress-bar">
                 <div id="progress-fill" class="progress-fill"></div>
             </div>
-            <p id="loading-text" class="loading-text">Understanding your questions...</p>
+            <p id="loading-text" class="loading-text">Initializing...</p>
         </div>
 
         <div id="result-container" class="result-container" style="display: none;">
@@ -61,7 +71,7 @@
         </div>
         <footer class="footer">
             <div class="language-switch">
-                <select id="language-select" onchange="switchLanguage(this.value)">
+                <select id="language-select" onchange="switchLanguage(this.value, true)">
                     <option value="en" selected>English</option>
                     <option value="zh">中文</option>
                 </select>

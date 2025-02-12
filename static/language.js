@@ -1,4 +1,4 @@
-function switchLanguage(lang) {
+function switchLanguage(lang, triggerRefresh = false) {
     const translations = {
         en: {
             title: "Omni Knows X.Y.Z.",
@@ -39,6 +39,10 @@ function switchLanguage(lang) {
     const languageSelect = document.getElementById('language-select');
     if (languageSelect) {
         languageSelect.value = lang;
+    }
+
+    if (triggerRefresh) {
+        location.reload();
     }
 }
 

@@ -1,15 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input")
   const searchButton = document.getElementById("search-button")
-  const dropdownMenu = document.getElementById("dropdown-menu")
   const suggestionsContainer = document.getElementById("suggestions")
   const loadingContainer = document.getElementById("loading-container")
   const progressFill = document.getElementById("progress-fill")
   const loadingText = document.getElementById("loading-text")
   const resultContainer = document.getElementById("result-container")
-
+  const modeToggle = document.getElementById("mode-toggle")
+  // 获取滑块元素
+  const slider = document.querySelector(".mode-toggle-label .slider")
+  
+  // 读取用户选择的语言
   const language = localStorage.getItem("language")
   
+  // 当用户未选择模式时，默认选择 "fast"
+  let mode = localStorage.getItem("mode") || "fast"
+  
+  // 初始化模式切换按钮状态
+  modeToggle.checked = mode === "universal"
+  
+  // 初始化滑块颜色
+  if (mode === "universal") {
+      slider.style.background = "linear-gradient(90deg, #FF7E5F, #6f99e9)"  // 全能模式渐变色
+  } else {
+      slider.style.backgroundColor = "#20818e"  // 快速模式淡蓝色
+  }
+
+  // 监听模式切换
+  modeToggle.addEventListener("change", () => {
+      mode = modeToggle.checked ? "universal" : "fast"
+      localStorage.setItem("mode", mode)
+      if (mode === "universal") {
+          slider.style.background = "linear-gradient(90deg, #FF7E5F, #6f99e9)"
+      } else {
+          slider.style.background = "#20818e"
+      }
+  })
+
   const suggestedQueries = language === "zh" ? [
     "今年最好的电视节目？",
     "必看10大电影",
@@ -74,12 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
     "Best ways to relax",
   ]
 
-  // Randomly select 6 suggestions from the array
+  // 随机选取6个建议
   const randomSuggestions = suggestedQueries
     .sort(() => 0.5 - Math.random())
     .slice(0, 6)
 
-  // Populate suggested queries as chips; clicking immediately triggers a search
+  // 填充建议按钮；点击后立即触发搜索
   randomSuggestions.forEach((query) => {
     const chip = document.createElement("button")
     chip.className = "suggestion-chip"
@@ -91,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     suggestionsContainer.appendChild(chip)
   })
 
-  // Load last search result if available
+  // 如果存在上一次搜索结果则加载
   const lastQuery = localStorage.getItem("lastSearchQuery")
   const lastResult = localStorage.getItem("lastSearchResult")
   if (lastQuery && lastResult) {
@@ -100,41 +127,48 @@ document.addEventListener("DOMContentLoaded", () => {
     resultContainer.innerHTML = marked.parse(lastResult)
   }
 
-  // Handle search
+  // 打字机效果函数，返回定时器ID
+  function typeWriterEffect(text, element, speed, callback) {
+    element.textContent = ""
+    let i = 0
+    const timer = setInterval(() => {
+      element.textContent += text.charAt(i)
+      i++
+      if (i >= text.length) {
+        clearInterval(timer)
+        if (callback) callback()
+      }
+    }, speed)
+    return timer
+  }
+
+  // 处理搜索
   function handleSearch() {
     const query = searchInput.value.trim()
     if (!query) return
 
-    // 隐藏建议栏
+    // 隐藏建议栏，显示结果容器
     suggestionsContainer.style.display = "none"
-
-    // 显示搜索结果占位文本并加上高斯模糊效果
     resultContainer.style.display = "block"
-    resultContainer.innerHTML = `
-      <h1>What is Omni Search</h1>
-      <p style="padding: 20px;">
-        Omni search is a powerful search engine that uses the latest AI technology to provide you with the most relevant information on the web.
-        By doing so, we aim to make it easier for you to find the answers you need, when you need them.
-      </p>
-      <h2>How to use Omni Search</h2>
-      <p style="padding: 20px;">
-        To use Omni Search, simply type your question in the search bar above and press the search button.
-        Our AI will then search the web for the most relevant information and present it to you in an easy-to-read format.
-      </p>
-      <h2>Why use Omni Search</h2>
-      <p style="padding: 20px;">
-        Omni Search is designed to help you find the answers you need quickly and easily.
-        Whether you're looking for information on a specific topic or just want to learn something new, Omni Search has you covered.
-      </p>
-    `
-    resultContainer.style.filter = "blur(5px)"
 
-    // 显示进度条
+    const placeholderContent = `    The user is asking about ${query}. To do this we begin by analyzing your query and gathering all the relevant details necessary to provide a clear and concise answer. Our system is currently processing your request, understanding the underlying context, and coordinating resources to deliver the best possible response. We understand that your inquiry is important and requires a thoughtful approach, so we are actively working behind the scenes.
+    
+    During this brief waiting period, our algorithm is parsing your question and reviewing the latest data to ensure the response is accurate and comprehensive. Our multi-step process involves evaluating similar queries, consulting updated resources, and generating insights tailored to your specific needs. This helps us simulate a conversational tone that is presently engaging and closely aligned with your expectations.
+    
+    While you see this placeholder text, we are effectively “reasoning” with our advanced AI, drawing on a vast repository of information. Our goal is to create a final output that not only matches your query but exceeds your expectations by providing contextual clarity and actionable insights. Please hold on just a moment as we complete the final steps of our processing. We appreciate your patience and are confident that your inquiry about ${query} will soon reveal a well-rounded and insightful result.
+    `
+
+    resultContainer.style.filter = "blur(5px)"
+    resultContainer.style.transition = "filter 1s ease-out"
+    resultContainer.style.userSelect = "none"
+    
+    const placeholderTimer = typeWriterEffect(placeholderContent, resultContainer, 50)
+
     loadingContainer.style.display = "block"
     progressFill.style.width = "0%"
 
     let progress = 0
-    const interval = setInterval(() => {
+    const progressInterval = setInterval(() => {
       progress += 10
       progressFill.style.width = `${progress}%`
       if (progress < 20) {
@@ -150,18 +184,18 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingText.textContent = "Pulling things together..."
       }
       if (progress >= 90) {
-        clearInterval(interval)
+        clearInterval(progressInterval)
         loadingText.textContent = "Performing final checks..."
       }
     }, 2500)
 
-    // Updated API call to /search using POST and JSON body
+    // 发起搜索请求，携带mode参数
     fetch(`/search`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ query: query })
+      body: JSON.stringify({ query: query, mode: mode })
     })
       .then(response => {
         if (!response.ok) {
@@ -170,23 +204,24 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json()
       })
       .then((data) => {
-        clearInterval(interval)
-        loadingContainer.style.display = "none"
-        // 移除模糊效果，展示实际内容
-        resultContainer.style.filter = "none"
-
-
+        clearInterval(placeholderTimer)
+        resultContainer.textContent = ""
+        resultContainer.innerHTML = marked.parse(data.result)
+        resultContainer.style.userSelect = ""
         localStorage.setItem("lastSearchQuery", query)
         localStorage.setItem("lastSearchResult", data.result)
-        resultContainer.innerHTML = marked.parse(data.result)
+        loadingContainer.style.display = "none"
+        requestAnimationFrame(() => {
+          resultContainer.style.filter = "blur(0px)"
+        })
 
-        const codeBlocks = resultContainer.querySelectorAll('pre code');
+        const codeBlocks = resultContainer.querySelectorAll('pre code')
         codeBlocks.forEach((block) => {
-          hljs.highlightElement(block);
-        });
+          hljs.highlightElement(block)
+        })
       })
       .catch((error) => {
-        clearInterval(interval)
+        clearInterval(placeholderTimer)
         loadingContainer.style.display = "none"
         resultContainer.style.filter = "none"
         resultContainer.innerHTML = `<p>Error fetching results: ${error.message}</p>`
@@ -195,9 +230,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   searchButton.addEventListener("click", handleSearch)
-  searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      handleSearch()
-    }
-  })
 })

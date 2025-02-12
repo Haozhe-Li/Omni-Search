@@ -3,7 +3,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fcfcf9;
+  background-color: #f3f3ed;
 }
 
 * {
@@ -84,7 +84,7 @@ body {
 
 .suggestion-chip {
   padding: 0.5rem 1rem;
-  background: #f1f5f9;
+  background: #ffffff;
   border: none;
   border-radius: 9999px;
   cursor: pointer;
@@ -92,7 +92,7 @@ body {
 }
 
 .suggestion-chip:hover {
-  background: #e2e8f0;
+  background: #dfdfdf;
 }
 
 .loading-container {
@@ -190,7 +190,7 @@ body {
 
 .result-container code {
   padding: 0.25rem 0.5rem;
-  background: #eaf4fe;
+  background: #f3f3ed;
   border-radius: 0.25rem;
   line-height: 1.6;
 }
@@ -391,4 +391,57 @@ body {
 .fade-out {
   opacity: 0;
   transition: opacity 0.5s;
+}
+
+/* 模式切换滑块样式 */
+.mode-switch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.mode-toggle {
+    display: none;
+}
+
+.mode-toggle-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 40px;
+    background-color: #bebebe;
+    border-radius: 20px;
+    cursor: pointer;
+    /* 移除内边距，使用等高行高实现垂直居中 */
+    font-family: inherit;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.mode-label {
+    width: 50%;
+    text-align: center;
+    line-height: 40px;
+    z-index: 2;
+    position: relative;
+}
+
+.slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 52px;
+    height: 32px;
+    background-color: #fff;
+    border-radius: 16px;
+    transition: left 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.mode-toggle:checked + .mode-toggle-label .slider {
+    left: calc(100% - 56px);
 }
