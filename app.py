@@ -26,6 +26,10 @@ async def main():
         result = get_sample_response()
         time.sleep(3)
         return jsonify({"result": result})
+    if query == "longtest":
+        result = get_sample_response()
+        time.sleep(10)
+        return jsonify({"result": result})
     result = (
         await search.search(query)
         if mode == "universal"

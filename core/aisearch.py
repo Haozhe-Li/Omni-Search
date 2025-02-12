@@ -25,7 +25,7 @@ class AISearch:
         )
         self.cache = {}
         self.max_retries = 2
-        self.current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_date = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " at UTC time")
 
     async def _call_gpt(self, prompt, json_format=False, quick=False):
         if quick:
@@ -109,7 +109,8 @@ class AISearch:
         return json.loads(response)["language"]
 
     async def _breakdown_question(self, query, quick=False):
-        prompt = f"""Today is {self.current_date}. Break down this complex question into 2-4 sub-questions. 
+        prompt = f"""
+        Break down this complex question into 2-4 sub-questions. 
         When breaking down the questions, consider the different aspects that need to be covered to provide a comprehensive answer.
 
         You are encouraged to generate sub-questions with different language as the original question, if you think it will help to get a better answer.
@@ -226,7 +227,7 @@ class AISearch:
         1. Use markdown formatting
         2. Cite sources as [Title](url)
         3. Include data points from research
-        4. Current date: {self.current_date}
+        4. Current date: {self.current_date}. If the time in searching is different, this date is the correct one.
         5. use {language} language for the answer
         6. You have to create a reference list at the end, see the example.
         7. Answer should be at least 400 words. If the answer is less than 400 words, you can rewrite the answer to make it longer.
@@ -362,7 +363,7 @@ class AISearch:
 
         Follow these rules when answer questions:
         1. Your respond should be in {language} language.
-        2. Today is {self.current_date}. 
+        2. Today is {self.current_date}. If the time in searching is different, this date is the correct one.
         3. Use Markdown format for the answer.
         4. Reply at least 100 words for your answer.
         5. Your answer should start with greetings, like "Hey! I'm Omni, and here's what I found for you:".

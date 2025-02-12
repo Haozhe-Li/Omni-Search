@@ -96,6 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleSearch() {
+        // disable search button
+        searchButton.disabled = true
         const query = searchInput.value.trim()
         if (!query) return
 
@@ -154,6 +156,7 @@ While you see this placeholder text, we are effectively “reasoning” with our
                 codeBlocks.forEach(block => {
                     hljs.highlightElement(block)
                 })
+                searchButton.disabled = false
             })
             .catch(error => {
                 clearInterval(placeholderTimer)
@@ -161,6 +164,8 @@ While you see this placeholder text, we are effectively “reasoning” with our
                 resultContainer.style.filter = "none"
                 resultContainer.innerHTML = `<p>Error fetching results: ${error.message}</p>`
                 console.error(error)
+                // enable search button
+                searchButton.disabled = false
             })
     }
 
