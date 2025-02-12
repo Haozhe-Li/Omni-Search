@@ -4,6 +4,7 @@ from core.test_response import get_sample_response
 import time
 
 app = Flask(__name__)
+search = AISearch()
 
 
 @app.route("/")
@@ -12,15 +13,18 @@ async def index():
 
 
 @app.route("/search", methods=["POST"])
-async def search():
+async def main():
     query = request.json["query"]
     mode = request.json["mode"]
     if query == "test":
         result = get_sample_response()
         time.sleep(3)
         return jsonify({"result": result})
-    search = AISearch()
-    result = await search.search(query) if mode == "universal" else await search.quick_search(query)
+    result = (
+        await search.search(query)
+        if mode == "universal"
+        else await search.quick_search(query)
+    )
     result = result["answer"]
     return jsonify({"result": result})
 

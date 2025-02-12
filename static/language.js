@@ -4,13 +4,18 @@ function switchLanguage(lang, triggerRefresh = false) {
             title: "Omni Knows X.Y.Z.",
             footer: "Omni Search",
             searchButton: "Search",
-            searchPlaceholder: "Got any questions?"
+            searchPlaceholder: "Got any questions?",
+            modeFast: "Light",
+            modeUniversal: "Omni",
         },
         zh: {
             title: "奥秘尽知",
             footer: "奥秘搜索",
             searchButton: "搜索",
-            searchPlaceholder: "想问些什么？"
+            searchPlaceholder: "想问些什么？",
+            // 添加模式切换的翻译
+            modeFast: "快速",
+            modeUniversal: "全能",
         }
     };
 
@@ -36,9 +41,31 @@ function switchLanguage(lang, triggerRefresh = false) {
         searchInput.placeholder = translations[lang].searchPlaceholder;
     }
 
+    // 添加模式切换文本的翻译
+    const modeFastLabel = document.querySelector(".mode-label.mode-fast");
+    if (modeFastLabel && translations[lang]) {
+        modeFastLabel.textContent = translations[lang].modeFast;
+    }
+
+    const modeUniversalLabel = document.querySelector(".mode-label.mode-universal");
+    if (modeUniversalLabel && translations[lang]) {
+        modeUniversalLabel.textContent = translations[lang].modeUniversal;
+    }
+
     const languageSelect = document.getElementById('language-select');
     if (languageSelect) {
         languageSelect.value = lang;
+    }
+
+    // 更新 tooltip 的文本（如果存在）
+    const modeTooltip = document.querySelector(".mode-tooltip");
+    if (modeTooltip && translations[lang]) {
+        const mode = localStorage.getItem("mode") || "fast";
+        if (mode === "universal") {
+            modeTooltip.textContent = translations[lang].modeUniversalDesc;
+        } else {
+            modeTooltip.textContent = translations[lang].modeFastDesc;
+        }
     }
 
     if (triggerRefresh) {
