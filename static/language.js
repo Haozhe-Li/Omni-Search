@@ -6,14 +6,14 @@ function switchLanguage(lang, triggerRefresh = false) {
             searchButton: "Search",
             searchPlaceholder: "Got any questions?",
             modeFast: "Light",
-            modeUniversal: "Deep",
+            modeUniversal: "Omni",
         },
         zh: {
             title: "奥秘尽知",
             footer: "奥秘搜索",
             searchButton: "搜索",
             searchPlaceholder: "想问些什么？",
-            modeFast: "迅搜",
+            modeFast: "预览",
             modeUniversal: "全索",
         }
     };

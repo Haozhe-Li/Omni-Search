@@ -447,3 +447,32 @@ body {
 .mode-toggle:checked + .mode-toggle-label .slider {
     left: calc(100% - 56px);
 }
+
+.description-mode {
+    font-size: 0.85rem;
+    margin: 8px 0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    color: #666666;
+    background: transparent;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+/* Animation when mode changes */
+@keyframes descriptionUpdate {
+    0% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.description-mode.update {
+    animation: descriptionUpdate 0.3s ease-out;
+}

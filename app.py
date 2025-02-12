@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from core.aisearch import AISearch
 from core.test_response import get_sample_response
+from core.suggestion import get_suggestion
 import time
 
 app = Flask(__name__)
@@ -10,6 +11,11 @@ search = AISearch()
 @app.route("/")
 async def index():
     return render_template("index.html")
+
+@app.route("/getsuggestion")
+async def getsuggestion():
+    language = request.args.get("language")
+    return jsonify(get_suggestion(language))
 
 
 @app.route("/search", methods=["POST"])
