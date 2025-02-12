@@ -3,6 +3,9 @@ from core.aisearch import AISearch
 from core.test_response import get_sample_response
 from core.suggestion import get_suggestion
 import time
+import os
+
+is_dev = os.environ.get("DEV", 0)
 
 app = Flask(__name__)
 search = AISearch()
@@ -40,4 +43,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if is_dev:
+        app.run(debug=True)
+    else:
+        app.run()
