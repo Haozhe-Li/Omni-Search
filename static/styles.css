@@ -484,3 +484,22 @@ body {
     animation: descriptionUpdate 0.3s ease-out;
 }
 
+/* 添加旋转动画 */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 加载时按钮样式 */
+.search-button.loading {
+    background: linear-gradient(90deg, #b95ed7, #1f818e); /* 更换为加载时使用的颜色 */
+}
+
+/* 加载时旋转图标 */
+.search-button.loading svg {
+    animation: spin 2s linear infinite;
+}

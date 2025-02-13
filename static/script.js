@@ -96,36 +96,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleSearch() {
-        // disable search button
-        searchButton.disabled = true
-        const query = searchInput.value.trim()
-        if (!query) return
+        // disable search button and show loading state
+        searchButton.disabled = true;
+        searchButton.classList.add("loading");
 
-        suggestionsContainer.style.display = "none"
-        resultContainer.style.display = "block"
+        const query = searchInput.value.trim();
+        if (!query) return;
 
-        const placeholderContent = `The user is asking about ${query}. To do this we begin by analyzing your query and gathering all the relevant details necessary to provide a clear and concise answer. Our system is currently processing your request, understanding the underlying context, and coordinating resources to deliver the best possible response. We understand that your inquiry is important and requires a thoughtful approach, so we are actively working behind the scenes.
+        suggestionsContainer.style.display = "none";
+        resultContainer.style.display = "block";
 
-During this brief waiting period, our algorithm is parsing your question and reviewing the latest data to ensure the response is accurate and comprehensive. Our multi-step process involves evaluating similar queries, consulting updated resources, and generating insights tailored to your specific needs. This helps us simulate a conversational tone that is presently engaging and closely aligned with your expectations.
+        const placeholderContent = `The user is asking about ${query}. To do this we begin by analyzing your query ...`;
+        resultContainer.style.filter = "blur(5px)";
+        resultContainer.style.transition = "filter 1s ease-out";
+        resultContainer.style.userSelect = "none";
 
-While you see this placeholder text, we are effectively “reasoning” with our advanced AI, drawing on a vast repository of information. Our goal is to create a final output that not only matches your query but exceeds your expectations by providing contextual clarity and actionable insights. Please hold on just a moment as we complete the final steps of our processing. We appreciate your patience and are confident that your inquiry about ${query} will soon reveal a well-rounded and insightful result.
-        `
+        const placeholderTimer = typeWriterEffect(placeholderContent, resultContainer, 50);
 
-        resultContainer.style.filter = "blur(5px)"
-        resultContainer.style.transition = "filter 1s ease-out"
-        resultContainer.style.userSelect = "none"
-
-        const placeholderTimer = typeWriterEffect(placeholderContent, resultContainer, 50)
-
-        loadingContainer.style.display = "block"
-        progressFill.style.width = "0%"
+        loadingContainer.style.display = "block";
+        progressFill.style.width = "0%";
 
         if (mode == "universal") {
-            loadingText.textContent = language === 'zh' ? "正在全面搜索结果中，请稍等，预计需要 10-15 秒..." : "Performing a comprehensive search, please wait, it may take 10-15 seconds..."
+            loadingText.textContent = language === 'zh' ? "正在全面搜索结果中，请稍等，预计需要 10-15 秒..." : "Performing a comprehensive search, please wait, it may take 10-15 seconds...";
         } else {
-            loadingText.textContent = language === 'zh' ? "正在极速查询" : "Performing a lightning-fast search"
+            loadingText.textContent = language === 'zh' ? "正在极速查询" : "Performing a lightning-fast search";
         }
-
 
         fetch(`/search`, {
             method: "POST",
@@ -136,37 +131,40 @@ While you see this placeholder text, we are effectively “reasoning” with our
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json()
+                return response.json();
             })
             .then(data => {
-                clearInterval(placeholderTimer)
-                resultContainer.textContent = ""
-                resultContainer.innerHTML = marked.parse(data.result)
-                resultContainer.style.userSelect = ""
-                localStorage.setItem("lastSearchQuery", query)
-                localStorage.setItem("lastSearchResult", data.result)
-                loadingContainer.style.display = "none"
+                clearInterval(placeholderTimer);
+                resultContainer.textContent = "";
+                resultContainer.innerHTML = marked.parse(data.result);
+                resultContainer.style.userSelect = "";
+                localStorage.setItem("lastSearchQuery", query);
+                localStorage.setItem("lastSearchResult", data.result);
+                loadingContainer.style.display = "none";
                 requestAnimationFrame(() => {
-                    resultContainer.style.filter = "blur(0px)"
-                })
+                    resultContainer.style.filter = "blur(0px)";
+                });
 
-                const codeBlocks = resultContainer.querySelectorAll('pre code')
+                const codeBlocks = resultContainer.querySelectorAll('pre code');
                 codeBlocks.forEach(block => {
-                    hljs.highlightElement(block)
-                })
-                searchButton.disabled = false
+                    hljs.highlightElement(block);
+                });
+                // 恢复搜索按钮
+                searchButton.disabled = false;
+                searchButton.classList.remove("loading");
             })
             .catch(error => {
-                clearInterval(placeholderTimer)
-                loadingContainer.style.display = "none"
-                resultContainer.style.filter = "none"
-                resultContainer.innerHTML = `<p>Error fetching results: ${error.message}</p>`
-                console.error(error)
-                // enable search button
-                searchButton.disabled = false
-            })
+                clearInterval(placeholderTimer);
+                loadingContainer.style.display = "none";
+                resultContainer.style.filter = "none";
+                resultContainer.innerHTML = `<p>Error fetching results: ${error.message}</p>`;
+                console.error(error);
+                // 恢复搜索按钮
+                searchButton.disabled = false;
+                searchButton.classList.remove("loading");
+            });
     }
 
     searchButton.addEventListener("click", handleSearch)
