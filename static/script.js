@@ -51,7 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateDescriptionText()
 
-    fetch(`/getsuggestion?language=${language}`, { method: "GET" })
+    function getSuggestion() {
+        fetch(`/getsuggestion?language=${language}`, { method: "GET" })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`)
@@ -59,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json()
         })
         .then(suggestions => {
-            const randomSuggestions = suggestions
+            const randomSuggestions = suggestions.sort(() => 0.5 - Math.random()).slice(0, 3)
             randomSuggestions.forEach(query => {
                 const chip = document.createElement("button")
                 chip.className = "suggestion-chip"
@@ -72,6 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
             })
         })
         .catch(error => console.error("Failed to load suggestions:", error))
+    }
+
+    getSuggestion();
 
     const lastQuery = localStorage.getItem("lastSearchQuery")
     const lastResult = localStorage.getItem("lastSearchResult")
@@ -106,6 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
         suggestionsContainer.style.display = "none";
         resultContainer.style.display = "block";
 
+        // clear previous suggestions
+        suggestionsContainer.innerHTML = "";
+        getSuggestion();
+
         const placeholderContent = `The user is asking about ${query}. To do this we begin by analyzing your query ...`;
         resultContainer.style.filter = "blur(5px)";
         resultContainer.style.transition = "filter 1s ease-out";
@@ -138,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 clearInterval(placeholderTimer);
                 resultContainer.textContent = "";
+                suggestionsContainer.style.display = "";
                 resultContainer.innerHTML = marked.parse(data.result);
                 resultContainer.style.userSelect = "";
                 localStorage.setItem("lastSearchQuery", query);
@@ -151,17 +160,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 codeBlocks.forEach(block => {
                     hljs.highlightElement(block);
                 });
-                // 恢复搜索按钮
                 searchButton.disabled = false;
                 searchButton.classList.remove("loading");
             })
             .catch(error => {
                 clearInterval(placeholderTimer);
+                suggestionsContainer.style.display = "";
                 loadingContainer.style.display = "none";
                 resultContainer.style.filter = "none";
                 resultContainer.innerHTML = `<p>Error fetching results: ${error.message}</p>`;
                 console.error(error);
-                // 恢复搜索按钮
                 searchButton.disabled = false;
                 searchButton.classList.remove("loading");
             });

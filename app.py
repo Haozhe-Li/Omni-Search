@@ -23,23 +23,26 @@ async def getsuggestion():
 
 @app.route("/search", methods=["POST"])
 async def main():
-    query = request.json["query"]
-    mode = request.json["mode"]
-    if query == "test":
-        result = get_sample_response()
-        time.sleep(3)
+    try:
+        query = request.json["query"]
+        mode = request.json["mode"]
+        if query == "test":
+            result = get_sample_response()
+            time.sleep(3)
+            return jsonify({"result": result})
+        if query == "longtest":
+            result = get_sample_response()
+            time.sleep(10)
+            return jsonify({"result": result})
+        result = (
+            await search.search(query)
+            if mode == "universal"
+            else await search.quick_search(query)
+        )
+        result = result["answer"]
         return jsonify({"result": result})
-    if query == "longtest":
-        result = get_sample_response()
-        time.sleep(10)
-        return jsonify({"result": result})
-    result = (
-        await search.search(query)
-        if mode == "universal"
-        else await search.quick_search(query)
-    )
-    result = result["answer"]
-    return jsonify({"result": result})
+    except Exception as e:
+        return jsonify({"result": "Hi I'm Omni, but something went wrong! Could you please try again?"})
 
 
 if __name__ == "__main__":
