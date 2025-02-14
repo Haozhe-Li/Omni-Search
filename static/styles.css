@@ -129,6 +129,11 @@ body {
   border-radius: 0.5rem;
 }
 
+/* hover on result */
+.result-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* Markdown Styles */
 .result-container h1 {
   font-size: 1.875rem;
@@ -423,7 +428,6 @@ body {
     background-color: #bebebe;
     border-radius: 20px;
     cursor: pointer;
-    /* 移除内边距，使用等高行高实现垂直居中 */
     font-family: inherit;
     font-size: 14px;
     color: #ffffff;
