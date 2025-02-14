@@ -176,3 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     searchButton.addEventListener("click", handleSearch)
 })
+
+function startOver() {
+    // remove everything from local storage
+    localStorage.clear();
+    // reload the page
+    location.reload();
+}
