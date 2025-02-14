@@ -26,12 +26,15 @@ async def main():
     try:
         query = request.json["query"]
         mode = request.json["mode"]
+        title = f"""# {query}\n\n------\n\n
+"""
+        footer = """\n\n------\n\n"""
         if query == "test":
-            result = get_sample_response()
+            result = title + get_sample_response() + footer
             time.sleep(3)
             return jsonify({"result": result})
         if query == "longtest":
-            result = get_sample_response()
+            result = title + get_sample_response() + footer
             time.sleep(10)
             return jsonify({"result": result})
         result = (
@@ -39,7 +42,7 @@ async def main():
             if mode == "universal"
             else await search.quick_search(query)
         )
-        result = result["answer"]
+        result = title + result["answer"] + footer
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"result": "Hi I'm Omni, but something went wrong! Could you please try again?"})

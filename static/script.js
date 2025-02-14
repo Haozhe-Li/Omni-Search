@@ -53,34 +53,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getSuggestion() {
         fetch(`/getsuggestion?language=${language}`, { method: "GET" })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
-            }
-            return response.json()
-        })
-        .then(suggestions => {
-            const randomSuggestions = suggestions.sort(() => 0.5 - Math.random()).slice(0, 3)
-            randomSuggestions.forEach(query => {
-                const chip = document.createElement("button")
-                chip.className = "suggestion-chip"
-                chip.textContent = query
-                chip.addEventListener("click", () => {
-                    searchInput.value = query
-                    handleSearch()
-                })
-                suggestionsContainer.appendChild(chip)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+                return response.json()
             })
-        })
-        .catch(error => console.error("Failed to load suggestions:", error))
+            .then(suggestions => {
+                const randomSuggestions = suggestions.sort(() => 0.5 - Math.random()).slice(0, 3)
+                randomSuggestions.forEach(query => {
+                    const chip = document.createElement("button")
+                    chip.className = "suggestion-chip"
+                    chip.textContent = query
+                    chip.addEventListener("click", () => {
+                        searchInput.value = query
+                        handleSearch()
+                    })
+                    suggestionsContainer.appendChild(chip)
+                })
+            })
+            .catch(error => console.error("Failed to load suggestions:", error))
     }
 
     getSuggestion();
 
-    const lastQuery = localStorage.getItem("lastSearchQuery")
+    // const lastQuery = localStorage.getItem("lastSearchQuery")
     const lastResult = localStorage.getItem("lastSearchResult")
-    if (lastQuery && lastResult) {
-        searchInput.value = lastQuery
+    if (lastResult) {
         resultContainer.style.display = "block"
         resultContainer.innerHTML = marked.parse(lastResult)
     }
@@ -100,17 +99,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleSearch() {
-        // disable search button and show loading state
-        searchButton.disabled = true;
-        searchButton.classList.add("loading");
 
         const query = searchInput.value.trim();
         if (!query) return;
 
+        searchButton.disabled = true;
+        searchButton.classList.add("loading");
+
         suggestionsContainer.style.display = "none";
         resultContainer.style.display = "block";
 
-        // clear previous suggestions
         suggestionsContainer.innerHTML = "";
         getSuggestion();
 
@@ -149,8 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 suggestionsContainer.style.display = "";
                 resultContainer.innerHTML = marked.parse(data.result);
                 resultContainer.style.userSelect = "";
-                localStorage.setItem("lastSearchQuery", query);
+                // localStorage.setItem("lastSearchQuery", query);
                 localStorage.setItem("lastSearchResult", data.result);
+                searchInput.value = "";
                 loadingContainer.style.display = "none";
                 requestAnimationFrame(() => {
                     resultContainer.style.filter = "blur(0px)";

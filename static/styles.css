@@ -204,7 +204,12 @@ body {
   line-height: 1.6;
 }
 
-/* LaTeX Equation Styling */
+.result-container hr {
+  margin: 1.5rem 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
 .equation {
   display: block;
   text-align: center;
@@ -311,7 +316,6 @@ body {
   }
 }
 
-/* Animate suggestion chips on hover */
 .suggestion-chip {
   transition: background-color 0.2s, transform 0.2s;
 }
@@ -321,12 +325,10 @@ body {
   background: #e2e8f0;
 }
 
-/* Animated progress fill bar */
 .progress-fill {
   animation: slide 2s linear infinite;
 }
 
-/* Smooth transitions for input focus */
 .search-input {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -335,7 +337,6 @@ body {
   box-shadow: 0 0 8px #51959e;
 }
 
-/* footer */
 .footer {
   margin-top: auto;
   padding: 2rem 0;
@@ -375,8 +376,6 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
-
 
 .gradient-title a {
   text-decoration: none;
@@ -468,7 +467,6 @@ body {
     letter-spacing: 0.2px;
 }
 
-/* Animation when mode changes */
 @keyframes descriptionUpdate {
     0% {
         opacity: 0;
@@ -484,7 +482,6 @@ body {
     animation: descriptionUpdate 0.3s ease-out;
 }
 
-/* 添加旋转动画 */
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -494,12 +491,10 @@ body {
     }
 }
 
-/* 加载时按钮样式 */
 .search-button.loading {
     background: linear-gradient(90deg, #b95ed7, #1f818e); /* 更换为加载时使用的颜色 */
 }
 
-/* 加载时旋转图标 */
 .search-button.loading svg {
     animation: spin 2s linear infinite;
 }
