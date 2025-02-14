@@ -39,8 +39,8 @@ class AISearch:
             )
             return response.choices[0].message.content.strip()
 
-        response = await self.oai.chat.completions.create(
-            model="gpt-4o-mini",
+        response = await self.gai.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
             response_format=(
@@ -309,12 +309,12 @@ class AISearch:
                 context,
                 language=language,
                 feedback="",
-                quick=True,
+                quick=False,
             )
 
             # print(f"Time taken for synth: {time.time() - timer}")
 
-            answer = await self._validate_answer(query, answer, language, quick=True)
+            answer = await self._validate_answer(query, answer, language, quick=False)
 
             # print(f"Time taken for validate: {time.time() - timer}")
 
@@ -372,7 +372,7 @@ class AISearch:
         {websearch}
 
         Question: {query}"""
-        result = await self._call_gpt(prompt, quick=True)
+        result = await self._call_gpt(prompt, quick=False)
         return {
             "answer": result,
         }
