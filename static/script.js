@@ -178,8 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function startOver() {
-    // remove everything from local storage
-    localStorage.clear();
-    // reload the page
+    localStorage.removeItem("lastSearchQuery");
+    localStorage.removeItem("lastSearchResult");
     location.reload();
 }
