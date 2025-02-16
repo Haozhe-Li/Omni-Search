@@ -112,12 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
         suggestionsContainer.innerHTML = "";
         getSuggestion();
 
-        const placeholderContent = `The user is asking about ${query}. To do this we begin by analyzing your query ...`;
+        const placeholderContent = `You've found a hidden gem—or rather, a completely meaningless placeholder text! This section doesn’t actually contain any real information. It's just here to fill space while we work on something awesome.
+Maybe it's a secret code? Maybe it's an elaborate inside joke? Or maybe… it’s just text with no purpose at all. Who knows? The possibilities are endless (but probably not).
+For now, enjoy this completely random piece of text. If you were expecting something insightful, we’re sorry to disappoint—but hey, at least you found a cool little Easter egg!
+Stay tuned for actual content coming soon. Or don’t. Either way, thanks for stopping by!`;
         resultContainer.style.filter = "blur(5px)";
         resultContainer.style.transition = "filter 1s ease-out";
         resultContainer.style.userSelect = "none";
 
-        const placeholderTimer = typeWriterEffect(placeholderContent, resultContainer, 50);
+        const speed = mode === "universal" ? 50 : 10;
+        const placeholderTimer = typeWriterEffect(placeholderContent, resultContainer, speed);
 
         loadingContainer.style.display = "block";
         progressFill.style.width = "0%";
