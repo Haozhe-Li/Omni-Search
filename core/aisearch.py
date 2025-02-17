@@ -301,12 +301,17 @@ class AISearch:
 
         while attempts <= self.max_retries:
             if attempts == 0:
-                search_results = await asyncio.gather(
-                    *[self._web_search(q) for q in breakdown["sub_questions"]]
-                )
-                query_result = await self._web_search(query, quick=True)
+                try:
+                    search_results = await asyncio.gather(
+                        *[self._web_search(q) for q in breakdown["sub_questions"]]
+                    )
+                except Exception as e:
+                    search_results = ["Websearch skipped for some error"]
+                if len(query) < 300:
+                    query_result = await self._web_search(query, quick=True)
+                else:
+                    query_result = ""
                 context = f"Summary Answer for Reference: \n\n{query_result}" + "\n\n".join(search_results)
-                # print(f"Time taken for searching: {time.time() - timer}")
 
             answer = await self._synthesize_answer(
                 query,
@@ -359,7 +364,13 @@ class AISearch:
         }
 
     async def quick_search(self, query):
-        websearch = await self._web_search(query, quick=True)
+        if len(query) < 300:
+            try:
+                websearch = await self._web_search(query, quick=True)
+            except Exception as e:
+                websearch =  "Websearch skipped for some error"
+        else:
+            websearch = "Websearch is too long, if you want to continue to search, please use omni mode to search."
         language = await self._get_language(query)
         prompt = f"""
         You are a helpful search engine name Omni.
@@ -378,6 +389,8 @@ class AISearch:
 
         Answer the question based on the following web search results:
         {websearch}
+
+        If websearch is skipped in websearch, please provide a general answer based on your knowledge. And you should notify the user that the websearch is skipped.
 
         Question: {query}"""
         result = await self._call_gpt(prompt, quick=False)

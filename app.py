@@ -11,17 +11,21 @@ allowed_hosts = os.environ.get("ALLOWED_HOSTS", "").split(",")
 app = Flask(__name__)
 search = AISearch()
 
+
 def request_come_from(request):
     """
     Check if the request comes from the same domain
     Returns: bool
     """
-    referer = request.headers.get('Referer', '')
-    origin = request.headers.get('Origin', '')
+    referer = request.headers.get("Referer", "")
+    origin = request.headers.get("Origin", "")
     # make sure the referer is in the allowed hosts and the origin is in the allowed hosts
-    if any([host in referer for host in allowed_hosts]) and any([host in origin for host in allowed_hosts]):
+    if any([host in referer for host in allowed_hosts]) and any(
+        [host in origin for host in allowed_hosts]
+    ):
         return True
     return False
+
 
 @app.route("/")
 async def index():
@@ -41,8 +45,10 @@ async def main():
             raise Exception("Request not allowed")
         query = request.json["query"]
         mode = request.json["mode"]
-        title = f"""# {query}\n\n------\n\n
-"""
+        if len(query) > 50:
+            title = f"# {query[:50]}...\n\n------\n\n"
+        else:
+            title = f"""# {query}\n\n------\n\n"""
         footer = """\n\n------\n\n"""
         if query == "test":
             result = title + get_sample_response() + footer
@@ -60,6 +66,7 @@ async def main():
         result = title + result["answer"] + footer
         return jsonify({"result": result})
     except Exception as e:
+        raise e
         return jsonify(
             {
                 "result": "Hi I'm Omni, but something went wrong! Could you please try again?"
