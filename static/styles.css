@@ -362,6 +362,11 @@ body {
   text-decoration: underline;
 }
 
+.footer img {
+  width: 72px;
+  height: 72px;
+}
+
 .language-switch {
   display: flex;
   justify-content: center;
