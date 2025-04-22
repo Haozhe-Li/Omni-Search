@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 from core.aisearch import AISearch
 from core.test_response import get_sample_response
 from core.suggestion import get_suggestion
@@ -9,6 +10,7 @@ is_dev = os.environ.get("DEV", 0)
 allowed_hosts = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 app = Flask(__name__)
+CORS(app)
 search = AISearch()
 
 
@@ -28,9 +30,9 @@ def request_come_from(request):
     return False
 
 
-@app.route("/")
-async def index():
-    return render_template("index.html")
+# @app.route("/")
+# async def index():
+#     return render_template("index.html")
 
 
 @app.route("/getsuggestion")
@@ -67,6 +69,7 @@ async def main():
         result = title + result["answer"] + footer
         return jsonify({"result": result})
     except Exception as e:
+        print(e)
         return jsonify(
             {
                 "result": "Hi I'm Omni, but something went wrong! Could you please try again?"
