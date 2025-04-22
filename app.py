@@ -32,6 +32,12 @@ def request_come_from(request):
 
 @app.route("/")
 async def index():
+    if not request_come_from(request):
+        return jsonify(
+            {
+                "result": "Request not allowed"
+            }
+        )
     return jsonify(
         {
             "result": "Welcome to Omni API"
@@ -41,6 +47,12 @@ async def index():
 
 @app.route("/getsuggestion")
 async def getsuggestion():
+    if not request_come_from(request):
+        return jsonify(
+            {
+                "result": "Request not allowed"
+            }
+        )
     language = request.args.get("language")
     return jsonify(get_suggestion(language))
 
