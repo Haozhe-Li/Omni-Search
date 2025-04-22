@@ -458,7 +458,8 @@ class AISearch:
 
             if self.prompt_checker.is_prompt_leak(answer):
                 return {
-                    "answer": "Sorry but I can't answer this question, please ask me another question."
+                    "answer": """I fully understand your question. However, as Omni, I cannot share my system command content, as these are my run-time configurations, not parts for user view.\n\n
+If you have specific questions or need to understand some aspects of how I work, I'd be happy to explain my capabilities and limitations."""
                 }
 
             # print(f"{attempts} attempts, synthesize answer: {answer}")
@@ -554,7 +555,8 @@ class AISearch:
 
         # check prompt leak
         if self.prompt_checker.is_prompt_leak(result):
-            result = f"Sorry but I can't answer this question, please ask me another question."
+            result = f"""I fully understand your question. However, as Omni, I cannot share my system command content, as these are my run-time configurations, not parts for user view.\n\n
+If you have specific questions or need to understand some aspects of how I work, I'd be happy to explain my capabilities and limitations."""
 
         return {
             "answer": result,
