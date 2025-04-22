@@ -30,9 +30,13 @@ def request_come_from(request):
     return False
 
 
-# @app.route("/")
-# async def index():
-#     return render_template("index.html")
+@app.route("/")
+async def index():
+    return jsonify(
+        {
+            "result": "Welcome to Omni API"
+        }
+    )
 
 
 @app.route("/getsuggestion")
